@@ -48,6 +48,19 @@ def create_note(request):
     newNoteId = notes_service.create_note(title, content)
     return success(newNoteId)
 
+def update_note(request):
+    """更新笔记"""
+    if request.method != 'POST':
+        return success()
+
+    # 使用JSON方法传入，获取参数示例
+    json_data = json.loads(request.body)
+    note_id = json_data['note_id']
+    title = json_data['title']
+    content = json_data['content']
+    noteId = notes_service.update_note(note_id, title, content)
+    return success(noteId)
+
 def get_all_notes(request):
     """获取所有笔记"""
     all_notes = notes_dao.get_all_notes()

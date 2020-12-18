@@ -14,3 +14,8 @@ def create_note(title, content='', create_user_id=0, status=1):
     """写入新的笔记"""
     newNoteId = notes_dao.create_note(title, content, create_user_id, status)
     return newNoteId
+
+def update_note(note_id, title, content):
+    """更新笔记"""
+    noteId = notes_dao.update_note(note_id, title, content)
+    return noteId

@@ -16,4 +16,6 @@ urlpatterns = [
     path('notes/<int:note_id>', home.get_note_detail),
     # 创建笔记
     path('create_note', home.create_note),
+    # 更新笔记
+    path('update_note', home.update_note),
 ]
