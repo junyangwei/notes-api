@@ -21,4 +21,6 @@ urlpatterns = [
     
     # 包含我们需要notes_api的URL
     path('', include('notes_api.urls', namespace='notes_api')),
+    # 登陆鉴权users的URL
+    path('users/', include('users.urls', namespace='users')),
 ]

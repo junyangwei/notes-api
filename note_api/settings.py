@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'notes_api',
     # 解决跨域请求的依赖
     'corsheaders',
+    # 用户应用
+    'users',
 ]
 
 MIDDLEWARE = [
