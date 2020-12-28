@@ -25,8 +25,8 @@ def login(request):
 
         request.session['is_login'] = True
         request.session['user_id'] = user.id
-        request.session['user_name'] = user.username
-        request.session['nikename'] = user.nickname
+        request.session['username'] = user.username
+        request.session['nickname'] = user.nickname
         request.session['phone'] = user.phone
         return success(get_session_user(request))
 
@@ -37,10 +37,9 @@ def get_session_user(request):
     session_user = {
         'user_id': request.session.get('user_id', default=0),
         'username': request.session.get('username', default=None),
-        'nikename': request.session.get('nickname', default=None),
+        'nickname': request.session.get('nickname', default=None),
         'phone': request.session.get('phone', default=None),
     }
-    print(session_user)
     return session_user
 
 def success(argData='', msg=''):
