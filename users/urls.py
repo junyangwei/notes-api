@@ -6,4 +6,6 @@ app_name='users';
 urlpatterns = [
     # 登陆
     path('login', users.login, name='login'),
+    # 退出登录
+    path('logout', users.logout, name='logout'),
 ]

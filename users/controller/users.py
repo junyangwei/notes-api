@@ -32,6 +32,14 @@ def login(request):
 
     return fail('缺少入参：账号 / 密码')
 
+def logout(request):
+    """退出登录"""
+    if not request.session.get('is_login', default=False):
+        return fail('抱歉，您还未登陆，不允许进行退出登录操作')
+
+    request.session.flush()
+    return success(1)
+
 def get_session_user(request):
     """获取session中的用户信息字典"""
     session_user = {
