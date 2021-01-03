@@ -1,6 +1,7 @@
 from django.http import JsonResponse, HttpResponse
 from users.models import User
 import json
+from urllib import parse
 
 def login(request):
     """用户登录"""
@@ -74,7 +75,8 @@ def format_success_data(argData='', msg=''):
     return result
 
 def set_cookie(response, key='', value='', max_age=1209600):
-    value = bytes(value, 'utf-8').decode('ISO-8859-1')
+    key = parse.quote(key)
+    value = parse.quote(value)
     response.set_cookie(key, value, max_age)
 
 def success(argData='', msg=''):
