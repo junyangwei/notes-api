@@ -23,12 +23,18 @@ def login(request):
         if user.password != password:
             return fail('账号或密码错误，请确认后再尝试')
 
-        request.session['is_login'] = True
-        request.session['user_id'] = user.id
-        request.session['username'] = user.username
-        request.session['nickname'] = user.nickname
-        request.session['phone'] = user.phone
-        return success(get_session_user(request))
+        # 设置session
+        set_session_user(request, user)
+
+        # return success(get_session_user(request))
+
+        # 设置cookie并返回
+        result = format_success_data(get_session_user(request))
+        response = JsonResponse(result)
+        max_age = request.session.get_session_cookie_age()
+        set_cookie(response, 'username', user.username, max_age)
+        set_cookie(response, 'nickname', user.nickname, max_age)
+        return response
 
     return fail('缺少入参：账号 / 密码')
 
@@ -49,6 +55,27 @@ def get_session_user(request):
         'phone': request.session.get('phone', default=None),
     }
     return session_user
+
+def set_session_user(request, user):
+    """设置用户信息的session"""
+    request.session['is_login'] = True
+    request.session['user_id'] = user.id
+    request.session['username'] = user.username
+    request.session['nickname'] = user.nickname
+    request.session['phone'] = user.phone
+
+def format_success_data(argData='', msg=''):
+    """拼接返回函数"""
+    result = {
+        'code': 0,
+        'msg': msg,
+        'data': argData,
+    }
+    return result
+
+def set_cookie(response, key='', value='', max_age=1209600):
+    value = bytes(value, 'utf-8').decode('ISO-8859-1')
+    response.set_cookie(key, value, max_age)
 
 def success(argData='', msg=''):
     """成功返回函数"""
