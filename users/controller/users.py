@@ -44,8 +44,12 @@ def logout(request):
     if not request.session.get('is_login', default=False):
         return fail('抱歉，您还未登陆，不允许进行退出登录操作')
 
+    result = format_success_data(1);
+    response = JsonResponse(result);
+    set_cookie(response, 'username', '', 0);
+    set_cookie(response, 'nickname', '', 0);
     request.session.flush()
-    return success(1)
+    return response
 
 def get_session_user(request):
     """获取session中的用户信息字典"""
