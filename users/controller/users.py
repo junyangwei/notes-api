@@ -2,6 +2,7 @@ from django.http import JsonResponse, HttpResponse
 from users.models import User
 import json
 from urllib import parse
+from users.service import users as users_service
 
 def login(request):
     """用户登录"""
@@ -51,6 +52,41 @@ def logout(request):
     request.session.flush()
     return response
 
+def register(request):
+    """用户注册"""
+    if request.method != 'POST':
+        return fail('调用方法不正确，请检查调用方式')
+
+    json_data = json.loads(request.body)
+    username = json_data.get('username').strip()
+    password = json_data.get('password').strip()
+    nickname = json_data.get('nickname')
+    phone = json_data.get('phone')
+    if not username or not password:
+        return fail('用户名/密码不能为空')
+
+    if len(password) < 6:
+        return fail('密码长度不得低于6位，请重新填写')
+
+    user = users_service.get_user_by_username(username)
+    if user:
+        return fail('用户名已存在，请修改后再尝试')
+
+    user = users_service.create_user(username, password, nickname, phone)
+    if not user:
+        return fail('创建用户失败，请联系管理员')
+
+    # 设置session
+    set_session_user(request, user)
+
+    # 设置cookie并返回
+    result = format_success_data(get_session_user(request))
+    response = JsonResponse(result)
+    max_age = request.session.get_session_cookie_age()
+    set_cookie(response, 'username', user.username, max_age)
+    set_cookie(response, 'nickname', user.nickname, max_age)
+    return response
+
 def get_session_user(request):
     """获取session中的用户信息字典"""
     session_user = {
@@ -80,7 +116,7 @@ def format_success_data(argData='', msg=''):
 
 def set_cookie(response, key='', value='', max_age=1209600):
     key = parse.quote(key)
-    value = parse.quote(value)
+    value = parse.quote(value) if value else ''
     response.set_cookie(key, value, max_age)
 
 def success(argData='', msg=''):
