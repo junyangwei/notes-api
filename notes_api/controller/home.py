@@ -3,6 +3,7 @@ import notes_api.dao.notes as notes_dao
 from notes_api.service import notes as notes_service
 from django.template.context_processors import csrf
 import json
+from users.common.decorators import login_required
 
 from notes_api.forms import NoteForm
 
@@ -18,14 +19,17 @@ def get_csrf(request):
     # return HttpResponse('{}'.format(csrf_token))
     # return HttpResponse(str(csrf_token))
 
+@login_required
 def get_notes(request):
     notes = notes_service.get_notes();
     return success(notes)
 
+@login_required
 def get_note_detail(request, note_id):
     note = notes_service.get_note_detail(note_id)
     return success(note)
 
+@login_required
 def create_note(request):
     """添加新笔记"""
     if request.method != 'POST':
@@ -48,6 +52,7 @@ def create_note(request):
     newNoteId = notes_service.create_note(title, content)
     return success(newNoteId)
 
+@login_required
 def update_note(request):
     """更新笔记"""
     if request.method != 'POST':
@@ -61,6 +66,7 @@ def update_note(request):
     noteId = notes_service.update_note(note_id, title, content)
     return success(noteId)
 
+@login_required
 def get_all_notes(request):
     """获取所有笔记"""
     all_notes = notes_dao.get_all_notes()
@@ -74,4 +80,3 @@ def success(argData='', msg=''):
         'data': argData,
     }
     return JsonResponse(result)
-
