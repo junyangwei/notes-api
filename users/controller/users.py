@@ -9,34 +9,34 @@ def login(request):
     if request.method != 'POST':
         return fail('调用方法不正确，请检查调用方式')
 
-    # if request.session.get('is_login', default=False):
-    #     return success(get_session_user(request))
-
     json_data = json.loads(request.body) 
-    username = json_data['username']
-    password = json_data['password']
-    if username and password:
-        username = username.strip()
-        try:
-            user = User.objects.get(username=username)
-        except:
-            return fail('用户信息不存在，请确认后再尝试')
+    username = json_data.get('username')
+    password = json_data.get('password')
 
-        if user.password != password:
-            return fail('账号或密码错误，请确认后再尝试')
+    if not (username and password):
+        return fail('缺少入参：账号 / 密码')
 
-        # 设置session
-        set_session_user(request, user)
+    username = username.strip()
+    password = password.strip()
+    try:
+        user = users_service.get_user_by_username(username)
+    except:
+        return fail('用户信息不存在，或账号密码错误，请确认后再尝试')
 
-        # return success(get_session_user(request))
+    password_hash = users_service.get_password_hash(password)
+    if user.password != password_hash:
+        return fail('用户信息不存在，或账号密码错误，请确认后再尝试')
 
-        # 设置cookie并返回
-        result = format_success_data(get_session_user(request))
-        response = JsonResponse(result)
-        max_age = request.session.get_session_cookie_age()
-        set_cookie(response, 'username', user.username, max_age)
-        set_cookie(response, 'nickname', user.nickname, max_age)
-        return response
+    # 设置session
+    set_session_user(request, user)
+
+    # 设置cookie并返回
+    result = format_success_data(get_session_user(request))
+    response = JsonResponse(result)
+    max_age = request.session.get_session_cookie_age()
+    set_cookie(response, 'username', user.username, max_age)
+    set_cookie(response, 'nickname', user.nickname, max_age)
+    return response
 
     return fail('缺少入参：账号 / 密码')
 
