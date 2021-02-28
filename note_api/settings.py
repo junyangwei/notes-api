@@ -55,6 +55,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 全局异常捕获中间件
+    'note_api.common.middleware.error_handler.ExceptionMiddleware',
 ]
 
 ROOT_URLCONF = 'note_api.urls'
