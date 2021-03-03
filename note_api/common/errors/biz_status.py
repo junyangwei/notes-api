@@ -10,4 +10,6 @@ biz_status = {
     'PARAM_ERROR': { 'code': -3, 'msg': '参数错误' },
 
     # 业务类错误信息
+    'USER_PASSWORD_ERROR': {
+        'code': 1001, 'msg': '用户不存在，或账号密码错误，请确认后再尝试'}
 }
