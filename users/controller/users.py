@@ -38,29 +38,16 @@ def logout(request):
     request.session.flush()
     return response
 
+@require_http_methods(['POST'])
 def register(request):
     """用户注册"""
-    if request.method != 'POST':
-        return fail('调用方法不正确，请检查调用方式')
-
     json_data = json.loads(request.body)
-    username = json_data.get('username').strip()
-    password = json_data.get('password').strip()
+    username = json_data.get('username')
+    password = json_data.get('password')
     nickname = json_data.get('nickname')
     phone = json_data.get('phone')
-    if not username or not password:
-        return fail('用户名/密码不能为空')
-
-    if len(password) < 6:
-        return fail('密码长度不得低于6位，请重新填写')
-
-    user = users_service.get_user_by_username(username)
-    if user:
-        return fail('用户名已存在，请修改后再尝试')
 
     user = users_service.create_user(username, password, nickname, phone)
-    if not user:
-        return fail('创建用户失败，请联系管理员')
 
     # 设置session
     set_session_user(request, user)
